@@ -15,7 +15,7 @@ https://github.com/jamproof/portfolio-web-blog-application.git
 **Vercel URLs**:  
 - https://portfolio-web-blog-application.vercel.app  
 - https://portfolio-web-blog-application-git-main-jamproofs-projects.vercel.app  
-- https://portfolio-web-blog-application-6mstcrsp5-jamproofs-projects.vercel.app  
+- https://portfolio-web-blog-application-k7h68aflw-jamproofs-projects.vercel.app  
 
 ---
 
