@@ -10,10 +10,10 @@ Welcome to the **TechScope Blog**, a simple Node.js-based web application that s
 - `/categories` – Returns JSON data for all available categories  
 - `/articles/add` – Add a new article using a form, with optional image upload support  
 
-**GitHub URL**:  
+**GitHub Repository:**  
 * https://github.com/jamproof/portfolio-web-blog-application.git
 
-**Vercel URLs**:  
+**Vercel URLs:**  
 - https://portfolio-web-blog-application.vercel.app  
 - https://portfolio-web-blog-application-git-main-jamproofs-projects.vercel.app  
 - https://portfolio-web-blog-application-k7h68aflw-jamproofs-projects.vercel.app  
@@ -61,7 +61,7 @@ Welcome to the **TechScope Blog**, a simple Node.js-based web application that s
 
 ---
 
-### 📝 Notes
+## 📝 Notes
 
 - This is a learning-focused project built without a database — data is stored in local JSON files.  
 - `/articles` and `/categories` are **dynamic API routes** that return JSON data based on `articles.json` and `categories.json`.  
@@ -72,26 +72,3 @@ Welcome to the **TechScope Blog**, a simple Node.js-based web application that s
 ---
 
 &copy; 2025 JamProof – jamproof0701@gmail.com
-
-<!-- # TechScope Blog Server -->
-
-<!-- ### 🧰 Technology Stack
-
-**Frontend**  
-- HTML  
-- CSS  
-- Bootstrap 5  
-
-**Backend**  
-- Node.js  
-- Express (Server Framework)  
-
-**Data Storage**  
-- JSON files stored locally (`articles.json`, `categories.json`)  
-
-**File Handling & Uploads**
-
-* `fs` (Node.js file system module) for reading JSON data
-* `multer` for handling multipart/form-data and file uploads (in-memory storage)
-* `cloudinary` for cloud image hosting
-* `streamifier` to convert in-memory buffer into stream for Cloudinary upload -->
