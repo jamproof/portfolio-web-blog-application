@@ -13,10 +13,34 @@ Welcome to the **TechScope Blog**, a simple Node.js-based web application that s
 **GitHub Repository:**  
 * https://github.com/jamproof/portfolio-web-blog-application.git
 
-**Vercel URLs:**  
+---
+
+## 🚀 Deployment Status
+
+The **TechScope Blog** has been successfully deployed using [Vercel](https://vercel.com/):
+
+- 🌐 **Live Site:** https://portfolio-web-blog-application.vercel.app
+- 🔄 API routes are fully functional and respond with JSON data as expected.
+- 🖼 Image upload via Cloudinary is integrated in the live environment.
+
+**Vercel deployment URLs:**  
 - https://portfolio-web-blog-application.vercel.app  
 - https://portfolio-web-blog-application-git-main-jamproofs-projects.vercel.app  
 - https://portfolio-web-blog-application-k7h68aflw-jamproofs-projects.vercel.app  
+
+---
+
+## 🧪 API Testing with Postman
+
+- API endpoints were tested successfully using **Postman Web** after deployment.
+- Example testable routes:
+  - `GET https://portfolio-web-blog-application.vercel.app/articles`
+  - `GET https://portfolio-web-blog-application.vercel.app/articles?category_id=2`
+  - `GET https://portfolio-web-blog-application.vercel.app/articles?minDate=2025-06-23`
+  - `GET https://portfolio-web-blog-application.vercel.app/article/1`
+  - `GET https://portfolio-web-blog-application.vercel.app/categories`
+- ✅ Works in **Postman Web** since the API is hosted online.
+- ⚠️ For local development, use **Postman Desktop Agent** when testing `http://localhost`.
 
 ---
 
