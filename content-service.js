@@ -114,7 +114,8 @@ function getArticlesByMinDate(minDateStr) {
 // Get article by ID (Return published articles only)
 function getArticleById(id) {
     return new Promise((resolve, reject) => {
-        const found = articles.find(article => article.id == id);
+        // const found = articles.find(article => article.id == id);
+        const found = articles.find(article => article.id === parseInt(id));
         // if (found) resolve(found);
         if (found && found.published) resolve(found);
         else reject("no result returned");

@@ -29,6 +29,11 @@ const app = express();
 // Assign a port
 const HTTP_PORT = process.env.PORT || 2025;
 
+// Set EJS as the template engine
+app.set('view engine', 'ejs');
+// Set the views directory
+app.set('views', path.join(__dirname, 'views'));
+
 // Serve static assets from /public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -40,14 +45,24 @@ app.get('/', (req, res) => {
     res.redirect('/about');
 });
 
-// Serve home.html on /home route
+// // Serve home.html on /home route
+// app.get('/home', (req, res) => {
+//     res.sendFile(path.join(__dirname, '/views/home.html'));
+// });
+
+// Serve home page
 app.get('/home', (req, res) => {
-    res.sendFile(path.join(__dirname, '/views/home.html'));
+    res.render('home');
 });
 
-// Serve about.html on /about route
+// // Serve about.html on /about route
+// app.get('/about', (req, res) => {
+//     res.sendFile(path.join(__dirname, '/views/about.html'));
+// });
+
+// Serve about page
 app.get('/about', (req, res) => {
-    res.sendFile(path.join(__dirname, '/views/about.html'));
+    res.render('about');
 });
 
 // // Serve articles.html on /articles route
@@ -98,9 +113,14 @@ app.get('/categories', (req, res) => {
         .catch(err => res.status(404).json({ message: err }));
 });
 
-// Route to serve the addArticle.html form
+// // Route to serve the addArticle.html form
+// app.get('/articles/add', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'views', 'addArticle.html'));
+// });
+
+// Serve add article page
 app.get('/articles/add', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'addArticle.html'));
+    res.render('addArticle');
 });
 
 // Route to add an article with an image
@@ -141,7 +161,7 @@ app.post('/articles/add', upload.single("featureImage"), (req, res) => {
             });
     } else {
         // No image file uploaded, just process the article without image URL
-        processArticle(""); // 沒圖片也能新增
+        processArticle(""); // If no image uploaded, pass an empty string // 沒圖片也能新增
     }
 });
 
