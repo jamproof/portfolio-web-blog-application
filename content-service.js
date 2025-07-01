@@ -22,10 +22,26 @@ function initialize() {
     });
 }
 
-// Return published articles only
+// // Return published articles only
+// function getPublishedArticles() {
+//     return new Promise((resolve, reject) => {
+//         const published = articles.filter(article => article.published === true);
+//         if (published.length > 0) {
+//             resolve(published);
+//         } else {
+//             reject("No published articles found.");
+//         }
+//     });
+// }
+
 function getPublishedArticles() {
     return new Promise((resolve, reject) => {
-        const published = articles.filter(article => article.published === true);
+        const published = articles
+            .filter(article => article.published === true)
+            .map(article => ({
+                ...article,
+                category_name: getCategoryNameById(article.category_id)
+            }));
         if (published.length > 0) {
             resolve(published);
         } else {
@@ -85,13 +101,27 @@ function addArticle(articleData) {
 //     });
 // }
 
-// Get articles by category (Return published articles only)
+// // Get articles by category (Return published articles only)
+// function getArticlesByCategory(categoryId) {
+//     return new Promise((resolve, reject) => {
+//         const id = parseInt(categoryId); // Make sure is number
+//         const filtered = articles.filter(article =>
+//             article.category_id === id && article.published
+//         );
+//         if (filtered.length > 0) resolve(filtered);
+//         else reject("No articles found for this category");
+//     });
+// }
+
 function getArticlesByCategory(categoryId) {
     return new Promise((resolve, reject) => {
-        const id = parseInt(categoryId); // Make sure is number
-        const filtered = articles.filter(article =>
-            article.category_id === id && article.published
-        );
+        const id = parseInt(categoryId);
+        const filtered = articles
+            .filter(article => article.category_id === id && article.published)
+            .map(article => ({
+                ...article,
+                category_name: getCategoryNameById(article.category_id)
+            }));
         if (filtered.length > 0) resolve(filtered);
         else reject("No articles found for this category");
     });
@@ -132,6 +162,11 @@ function getArticleById(id) {
     });
 }
 
+function getCategoryNameById(id) {
+    const category = categories.find(c => c.id === id);
+    return category ? category.name : 'Unknown';
+}
+
 // Export the functions
 module.exports = {
     initialize,
@@ -142,5 +177,6 @@ module.exports = {
     getArticlesByCategory,
     getArticlesByMinDate,
     getArticlesByAuthor,
-    getArticleById
+    getArticleById,
+    getCategoryNameById
 };

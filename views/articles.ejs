@@ -52,13 +52,16 @@
                               </td>
                             <td><%= article.author %></td>
                             <td>
-                                <% 
+                                <!-- <% 
                                     const category = categories.find(cat => cat.id === article.category_id);
                                     const categoryName = category ? category.name : "Unknown";
                                 %>
                                 <a href="/articles?category_id=<%= article.category_id %>">
                                     <%= categoryName %>
-                                </a>
+                                </a> -->
+                                <a href="/articles?category_id=<%= article.category_id %>">
+                                    <%= article.category_name %>
+                                </a>                                
                             </td>
                             <td><%= article.published_date %></td>
                         </tr>
