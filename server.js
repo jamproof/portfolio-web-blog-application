@@ -200,9 +200,18 @@ app.get('/categories', (req, res) => {
 //     res.sendFile(path.join(__dirname, 'views', 'addArticle.html'));
 // });
 
-// Serve add article page
-app.get('/articles/add', (req, res) => {
-    res.render('addArticle');
+// // Serve add article page
+// app.get('/articles/add', (req, res) => {
+//     res.render('addArticle');
+// });
+
+app.get('/articles/add', async (req, res) => {
+    try {
+        const categories = await contentService.getCategories();
+        res.render('addArticle', { categories });
+    } catch (err) {
+        res.render('addArticle', { categories: [], error: "Failed to load categories" });
+    }
 });
 
 // Route to add an article with an image
