@@ -1,0 +1,95 @@
+/* light/dark mode toggle */
+
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .table {
+    color: #e0e0e0;
+}
+
+body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #1e1e1e;
+}
+
+body.dark-mode .table-striped tbody tr:hover {
+    background-color: #2a2a2a;
+}
+
+body.dark-mode .navbar {
+    background-color: #222 !important;
+}
+
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: #2e2e2e;
+    color: #fff;
+    border-color: #444;
+}
+
+body.dark-mode .form-check-label {
+    color: #ccc;
+}
+
+body.dark-mode .btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+body.dark-mode .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+body.dark-mode footer {
+    background-color: #222;
+    color: #bbb;
+}
+
+/* Article table */
+
+.table-striped tbody tr:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+td strong {
+    font-size: 1.1rem;
+    color: #212529;
+}
+
+td small {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+a.read-more-link {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+a.read-more-link:hover {
+    text-decoration: underline;
+}
+
+table td, table th {
+    vertical-align: middle;
+}
+
+tbody tr td:first-child {
+    max-width: 400px;
+}
+
+tbody tr:hover td {
+    border-left: 3px solid #0d6efd;
+}
+
+h1 {
+    font-weight: 700;
+    color: #343a40;
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}

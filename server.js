@@ -150,11 +150,27 @@ app.get('/articles', async (req, res) => {
     }
 });
 
-// Route to get an article by ID (Return published articles only)
-app.get('/article/:id', (req, res) => {
-    contentService.getArticleById(req.params.id)
-        .then(data => res.json(data))
-        .catch(err => res.status(404).json({ message: err }));
+// // Route to get an article by ID (Return published articles only)
+// app.get('/article/:id', (req, res) => {
+//     contentService.getArticleById(req.params.id)
+//         .then(data => res.json(data))
+//         .catch(err => res.status(404).json({ message: err }));
+// });
+
+app.get('/article/:id', async (req, res) => {
+    try {
+        const article = await contentService.getArticleById(req.params.id);
+
+        if (!article.published) {
+            return res.status(404).render('404', { message: "Article not found." });
+        }
+
+        article.category_name = contentService.getCategoryNameById(article.category_id);
+
+        res.render('article', { article });
+    } catch (err) {
+        res.status(404).render('404', { message: "Article not found." });
+    }
 });
 
 // // Serve categories.html on /categories route

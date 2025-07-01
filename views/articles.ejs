@@ -46,7 +46,7 @@
                                 <small class="text-muted">
                                     <%= truncateWords(article.content, 10) %>
                                     <% if (article.content.split(/\s+/).length > 10) { %>
-                                      <a href="/articles/<%= article.id %>">Read more</a>
+                                      <a href="/article/<%= article.id %>" class="read-more-link">Read more</a>
                                     <% } %>
                                   </small>                                  
                               </td>

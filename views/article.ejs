@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/site.css">
+    <title><%= article.title %></title>
+</head>
+<body>
+    <!-- Navbar -->
+    <%- include("partials/navbar") %>
+
+    <div class="container mt-5">
+        <h1><%= article.title %></h1>
+
+        <p class="text-muted">
+            <strong>Author:</strong> <%= article.author %> |
+            <strong>Category:</strong> <%= article.category_name %> |
+            <strong>Published:</strong> <%= article.published_date %>
+        </p>
+        <!-- <p class="text-muted">By <%= article.author %> | Published on <%= article.published_date %></p> -->
+
+        <% if (article.featureImage) { %>
+            <div class="mb-4">
+                <img src="<%= article.featureImage %>" class="img-fluid rounded" alt="Feature Image">
+            </div>
+        <% } %>
+
+        <p><%= article.content %></p>
+
+        <a href="/articles" class="btn btn-secondary mt-4">← Back to Articles</a>
+    </div>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+
+</body>
+</html>
