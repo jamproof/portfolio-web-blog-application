@@ -162,12 +162,22 @@ app.get('/article/:id', (req, res) => {
 //     res.sendFile(path.join(__dirname, 'views', 'categories.html'));
 // });
 
-// Route to get categories as JSON
+// // Route to get categories as JSON
+// app.get('/categories', (req, res) => {
+//     contentService.getCategories()
+//         .then(data => res.json(data))
+//         .catch(err => res.status(404).json({ message: err }));
+// });
+
 app.get('/categories', (req, res) => {
     contentService.getCategories()
-        .then(data => res.json(data))
-        .catch(err => res.status(404).json({ message: err }));
-});
+      .then(categories => {
+        res.render('categories', { categories });
+      })
+      .catch(err => {
+        res.render('categories', { categories: [], error: err });
+      });
+  });  
 
 // // Route to serve the addArticle.html form
 // app.get('/articles/add', (req, res) => {
