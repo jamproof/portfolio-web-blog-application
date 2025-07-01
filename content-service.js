@@ -111,6 +111,16 @@ function getArticlesByMinDate(minDateStr) {
     });
 }
 
+function getArticlesByAuthor(authorName) {
+    return new Promise((resolve, reject) => {
+        const filtered = articles.filter(article =>
+            article.published && article.author.toLowerCase().includes(authorName.toLowerCase())
+        );
+        if (filtered.length > 0) resolve(filtered);
+        else reject("No articles found for that author");
+    });
+}
+
 // Get article by ID (Return published articles only)
 function getArticleById(id) {
     return new Promise((resolve, reject) => {
@@ -131,5 +141,6 @@ module.exports = {
     addArticle,
     getArticlesByCategory,
     getArticlesByMinDate,
+    getArticlesByAuthor,
     getArticleById
 };

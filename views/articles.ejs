@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/site.css" />
+    <title>Articles</title>
+</head>
+<body>
+    <!-- Navbar -->
+    <%- include("partials/navbar") %>
+
+    <%
+    function truncateWords(text, wordLimit) {
+      if (!text) return '';
+      const words = text.split(/\s+/);
+      if (words.length <= wordLimit) return text;
+      return words.slice(0, wordLimit).join(' ') + '...';
+    }
+    %>
+
+    <div class="container mt-5">
+        <h1 class="mb-4">Articles</h1>
+
+        <% if (error) { %>
+            <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+
+        <% if (articles && articles.length > 0) { %>
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Published Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% articles.forEach(article => { %>
+                        <tr>
+                            <td>
+                                <strong><%= article.title %></strong><br>
+                                <small class="text-muted">
+                                    <%= truncateWords(article.content, 10) %>
+                                    <% if (article.content.split(/\s+/).length > 10) { %>
+                                      <a href="/articles/<%= article.id %>">Read more</a>
+                                    <% } %>
+                                  </small>                                  
+                              </td>
+                            <td><%= article.author %></td>
+                            <td>
+                                <% 
+                                    const category = categories.find(cat => cat.id === article.category_id);
+                                    const categoryName = category ? category.name : "Unknown";
+                                %>
+                                <a href="/articles?category_id=<%= article.category_id %>">
+                                    <%= categoryName %>
+                                </a>
+                            </td>
+                            <td><%= article.published_date %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+
+            <form method="get" class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <label for="author" class="form-label">Author</label>
+                    <select name="author" id="author" class="form-select">
+                        <option value="">-- All Authors --</option>
+                        <% authors.forEach(authorName => { %>
+                            <option value="<%= authorName %>" <%= query.author === authorName ? 'selected' : '' %>>
+                                <%= authorName %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="category_id" class="form-label">Category</label>
+                    <select name="category_id" id="category_id" class="form-select">
+                        <option value="">-- All Categories --</option>
+                        <% categories.forEach(cat => { %>
+                            <option value="<%= cat.id %>" <%= query.category_id == cat.id ? 'selected' : '' %>>
+                                <%= cat.name %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>  
+
+                <div class="col-md-4">
+                    <label for="minDate" class="form-label">Published After</label>
+                    <input type="date" id="minDate" name="minDate" class="form-control" value="<%= query.minDate || '' %>">
+                </div>
+
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Search</label>
+                    <input type="text" id="search" name="search" class="form-control" value="<%= query.search || '' %>">
+                </div>
+
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="/articles" class="btn btn-secondary ms-2">Clear</a>
+                </div>
+            </form>            
+            
+        <% } else { %>
+            <div class="alert alert-warning">No articles available.</div>
+        <% } %>
+
+        <a href="/articles" class="btn btn-primary mt-4">Back Articles</a>
+    </div>
+
+    <!-- Footer -->
+    <%- include("partials/footer") %>
+
+</body>
+</html>

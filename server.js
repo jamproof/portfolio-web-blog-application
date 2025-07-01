@@ -77,20 +77,76 @@ app.get('/about', (req, res) => {
 //         .catch(err => res.status(404).json({ message: err }));
 // });
 
-// Route to get all articles or filtered articles (Return published articles only)
-app.get('/articles', (req, res) => {
-    if (req.query.category_id) {
-        contentService.getArticlesByCategory(req.query.category_id)
-            .then(data => res.json(data))
-            .catch(err => res.status(404).json({ message: err }));
-    } else if (req.query.minDate) {
-        contentService.getArticlesByMinDate(req.query.minDate)
-            .then(data => res.json(data))
-            .catch(err => res.status(404).json({ message: err }));
-    } else {
-        contentService.getPublishedArticles()
-            .then(data => res.json(data))
-            .catch(err => res.status(404).json({ message: err }));
+// // Route to get all articles or filtered articles (Return published articles only)
+// app.get('/articles', (req, res) => {
+//     if (req.query.category_id) {
+//         contentService.getArticlesByCategory(req.query.category_id)
+//             .then(data => res.json(data))
+//             .catch(err => res.status(404).json({ message: err }));
+//     } else if (req.query.minDate) {
+//         contentService.getArticlesByMinDate(req.query.minDate)
+//             .then(data => res.json(data))
+//             .catch(err => res.status(404).json({ message: err }));
+//     } else {
+//         contentService.getPublishedArticles()
+//             .then(data => res.json(data))
+//             .catch(err => res.status(404).json({ message: err }));
+//     }
+// });
+
+app.get('/articles', async (req, res) => {
+    try {
+        const { category_id, minDate, author, search } = req.query;
+
+        let articles = await contentService.getPublishedArticles();
+
+        // Apply filters in sequence
+        if (category_id) {
+            articles = articles.filter(a => a.category_id === parseInt(category_id));
+        }
+        if (minDate) {
+            articles = articles.filter(a => new Date(a.published_date) >= new Date(minDate));
+        }
+        if (author) {
+            articles = articles.filter(a => a.author.toLowerCase().includes(author.toLowerCase()));
+        }
+        if (search) {
+            const keyword = search.toLowerCase();
+            articles = articles.filter(a =>
+                (a.title && a.title.toLowerCase().includes(keyword)) ||
+                (a.content && a.content.toLowerCase().includes(keyword))
+            );
+        }
+
+        const categories = await contentService.getCategories();
+
+        // Get all published articles to extract unique authors
+        const allPublished = await contentService.getPublishedArticles();
+        const authors = [...new Set(allPublished.map(a => a.author))].sort();
+
+        res.render('articles', {
+            articles,
+            categories,
+            authors,
+            error: null,
+            query: req.query
+        });
+    } catch (err) {
+        let authors = [];
+        try {
+            const allPublished = await contentService.getPublishedArticles();
+            authors = [...new Set(allPublished.map(a => a.author))].sort();
+        } catch (e) {
+            console.error("Failed to load authors for fallback:", e);
+        }
+
+        res.render('articles', {
+            articles: [],
+            categories: [],
+            authors: [],
+            error: err,
+            query: req.query
+        });
     }
 });
 
