@@ -96,3 +96,178 @@ The **TechScope Blog** has been successfully deployed using [Vercel](https://ver
 ---
 
 &copy; 2025 JamProof – jamproof0701@gmail.com
+
+
+
+
+
+# 📰 TechScope Blog – Full-Stack Blog Platform
+
+Welcome to **TechScope Blog**, a full-stack Node.js web application for publishing and browsing articles across technology, AI, space, and science topics. Built with Express, EJS, and Bootstrap 5, it supports filtering, category browsing, article previews, and Cloudinary-based image uploads.
+
+## 🌐 Live Routes
+
+| Route                 | Description                                      |
+|----------------------|--------------------------------------------------|
+| `/home`              | Home page                                        |
+| `/about`             | About the blog and author                        |
+| `/articles`          | Browse all published articles with filters       |
+| `/articles/add`      | Add a new article via form + image upload        |
+| `/article/:id`       | View full article details                        |
+| `/categories`        | Browse available categories                      |
+
+🔗 **GitHub Repository:**  
+* https://github.com/jamproof/portfolio-web-blog-application.git
+
+---
+
+## 🚀 Deployment Status
+
+The **TechScope Blog** has been successfully deployed using [Vercel](https://vercel.com/):
+
+- 🌐 **Main Site:**  
+  https://portfolio-web-blog-application.vercel.app
+
+- 🔄 API endpoints and pages are fully functional
+- 🖼 Image uploads are handled via **Cloudinary**
+
+> ✅ API routes were tested using **Postman Web**
+
+### Sample Testable Endpoints
+
+- `GET /articles`
+- `GET /articles?category_id=2`
+- `GET /articles?minDate=2025-06-21`
+- `GET /article/1`
+- `GET /categories`
+
+> ⚠️ For local testing, use **Postman Desktop Agent** to avoid CORS errors with `http://localhost`.
+
+---
+
+## ✨ Features
+
+- 📰 View all published articles with:
+  - ✅ Keyword search
+  - ✅ Author filter
+  - ✅ Category filter
+  - ✅ Date filtering
+- 🧾 Full article detail view
+- 📤 Add new articles with optional **image upload**
+- 🖼 Image previews on form submission
+- 📂 Categories listing and filtering
+- 🧰 Modular, file-based data storage (`articles.json`, `categories.json`)
+- 💡 Responsive Bootstrap 5 design with EJS templates
+
+---
+
+## 🧪 Tech Stack
+
+### 🖼 Frontend
+- **HTML5** – Page structure  
+- **CSS3** – Custom styling  
+- **Bootstrap 5** – Modern responsive layout  
+- **EJS** – Server-side templating engine
+
+### 🔧 Backend
+- **Node.js** – Runtime  
+- **Express.js** – Web framework  
+
+### 🗂 Data & Files
+- **Local JSON files** for data simulation
+  - `data/articles.json`
+  - `data/categories.json`
+- **`fs/promises`** for async file I/O
+
+### 📤 Media & File Uploads
+- **Multer** – Handles image uploads (in-memory)  
+- **Cloudinary** – Hosts uploaded images  
+- **Streamifier** – Converts buffer to stream for Cloudinary
+
+---
+
+## 🗃 Project Structure
+
+project/
+├── data/                          # JSON files simulating a database
+│   ├── articles.json              # Article data
+│   └── categories.json            # Category data
+├── public/                        # Static assets
+│   ├── css/
+│   │   └── site.css               # Custom CSS styles
+│   └── img/                       # Images folder
+├── view/                          # EJS templates
+│   ├── partials/
+│   │   ├── footer.ejs             # Footer partial
+│   │   └── navbar.ejs             # Navbar partial
+│   ├── 404.ejs                    # Not found page
+│   ├── home.ejs                   # Home page
+│   ├── about.ejs                  # About page
+│   ├── article.ejs                # Single article view
+│   ├── articles.ejs               # Articles listing page
+│   ├── categories.ejs             # Categories listing
+│   └── addArticle.ejs             # Form to add a new article
+├── content-service.js             # Business logic & data service layer
+└── server.js                      # Express app and routing
+
+### 🎨 Frontend (UI & Static Assets)
+
+project/
+├── public/                        # 🌐 Static Assets
+│   ├── css/
+│   │   └── site.css               # 🎨 Custom site-wide styles
+│   └── img/                       # 🖼️ Image assets (optional)
+
+├── view/                          # 🧩 UI Templates (EJS)
+│   ├── partials/                  # 🔁 Reusable components
+│   │   ├── navbar.ejs             # 🌐 Site navigation bar
+│   │   └── footer.ejs             # 📄 Footer section
+│   ├── home.ejs                   # 🏠 Home page
+│   ├── about.ejs                  # 👤 About page
+│   ├── article.ejs                # 📄 Single article view
+│   ├── articles.ejs               # 🗂️ Articles list with filters
+│   ├── categories.ejs             # 📚 Categories list
+│   ├── addArticle.ejs             # 📝 Form to add a new article
+│   └── 404.ejs                    # ❌ Not Found error page
+
+### ⚙️ Backend (API, Routing, Data Layer)
+
+project/
+├── server.js                      # 🚀 Express server, routing, middleware, Cloudinary integration
+
+├── content-service.js             # 🧠 Data logic: fetch, filter, and transform articles/categories
+
+├── data/                          # 📦 Simulated Database
+│   ├── articles.json              # 📰 All articles data
+│   └── categories.json            # 📂 Article categories
+
+---
+
+## 📝 Notes
+
+- Data is **stored locally** — no external database is used.
+- Articles must be marked as `"published": true` to appear in `/articles`.
+- I will extend this project with:
+  - MongoDB/PostgreSQL integration
+  - User login/authentication
+  - Draft status for unpublished articles
+- The form on `/articles/add` allows image previews **before** upload.
+
+---
+
+## 📌 Known Limitations
+
+- No persistent DB — changes to articles/categories will reset unless saved to file manually.
+- No authentication — anyone can add articles from the form.
+
+---
+
+## 👤 Author
+
+**JamProof**  
+📧 jamproof0701@gmail.com  
+🌐 [https://github.com/jamproof](https://github.com/jamproof)
+
+---
+
+&copy; 2025 JamProof. All rights reserved.
