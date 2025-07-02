@@ -61,3 +61,6 @@ INSERT INTO articles (id, title, author, category_id, published_date, content, p
 -- List all categories and articles
 SELECT * FROM categories;
 SELECT * FROM articles;
+
+-- Reset articles id sequence to max value
+SELECT setval('articles_id_seq', (SELECT MAX(id) FROM articles));

@@ -1,3 +1,146 @@
+require('dotenv').config(); // Load environment variables
+const { Pool } = require('pg');
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
+
+// const pool = new Pool({
+//     user: 'neondb_owner',
+//     host: 'ep-calm-butterfly-a5232477-pooler.us-east-2.aws.neon.tech',
+//     database: 'blog_database',
+//     password: 'npg_kRGh1rPjt7bE',
+//     port: 5432,
+//     ssl: {
+//         rejectUnauthorized: false,
+//     },
+// });
+
+// Get all categories
+function getCategories() {
+    return pool.query(`SELECT * FROM categories`)
+        .then(res => res.rows)
+        .catch(() => Promise.reject("No categories found."));
+        // .catch(err => Promise.reject("Failed to load categories: " + err.message));
+}
+
+// Get published articles with category names
+async function getPublishedArticles() {
+    try {
+        const query = `
+            SELECT a.*, c.name AS category_name
+            FROM articles a
+            JOIN categories c ON a.category_id = c.id
+            WHERE a.published = true
+        `;
+        const result = await pool.query(query);
+        if (result.rows.length > 0) return result.rows;
+        else throw "No published articles found.";
+    } catch (err) {
+        return Promise.reject(err);
+    }
+}
+
+// Add a new article
+function addArticle(articleData) {
+    const {
+        title,
+        author,
+        category_id,
+        published_date,
+        content,
+        published = false,
+        feature_image = null
+    } = articleData;
+
+    const query = `
+        INSERT INTO articles (title, author, category_id, published_date, content, published, feature_image)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING *
+    `;
+
+    const values = [title, author, parseInt(category_id), published_date, content, published, feature_image];
+
+    return pool.query(query, values)
+        .then(res => res.rows[0])
+        .catch(err => Promise.reject("Failed to add article: " + err.message));
+}
+
+// Get articles by category ID (published only)
+function getArticlesByCategory(categoryId) {
+    const query = `
+        SELECT a.*, c.name AS category_name
+        FROM articles a
+        JOIN categories c ON a.category_id = c.id
+        WHERE a.category_id = $1 AND a.published = true
+    `;
+    return pool.query(query, [parseInt(categoryId)])
+        .then(res => res.rows.length ? res.rows : Promise.reject("No articles found for this category"))
+        .catch(err => Promise.reject(err.message));
+}
+
+// Get articles published after a certain date
+function getArticlesByMinDate(minDateStr) {
+    const query = `
+        SELECT *
+        FROM articles
+        WHERE published = true AND published_date >= $1
+    `;
+    return pool.query(query, [minDateStr])
+        .then(res => res.rows.length ? res.rows : Promise.reject("No articles published after that date"))
+        .catch(err => Promise.reject(err.message));
+}
+
+// Get articles by author (partial match, published only)
+function getArticlesByAuthor(authorName) {
+    const query = `
+        SELECT *
+        FROM articles
+        WHERE published = true AND LOWER(author) LIKE LOWER($1)
+    `;
+    return pool.query(query, [`%${authorName}%`])
+        .then(res => res.rows.length ? res.rows : Promise.reject("No articles found for this author"))
+        .catch(err => Promise.reject(err.message));
+}
+
+// Get a single published article by ID
+function getArticleById(id) {
+    const query = `
+        SELECT *
+        FROM articles
+        WHERE id = $1 AND published = true
+    `;
+    return pool.query(query, [parseInt(id)])
+        .then(res => res.rows.length ? res.rows[0] : Promise.reject("No articles available."))
+        .catch(err => Promise.reject(err.message));
+}
+
+// Get category name by ID (helper)
+function getCategoryNameById(id) {
+    const query = `SELECT name FROM categories WHERE id = $1`;
+    return pool.query(query, [parseInt(id)])
+        .then(res => res.rows.length ? res.rows[0].name : 'Unknown')
+        .catch(() => 'Unknown');
+}
+
+// Export all DB-backed functions
+module.exports = {
+    getCategories,
+    getPublishedArticles,
+    addArticle,
+    getArticlesByCategory,
+    getArticlesByMinDate,
+    getArticlesByAuthor,
+    getArticleById,
+    getCategoryNameById
+};
+
+
+
+/*
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -180,3 +323,4 @@ module.exports = {
     getArticleById,
     getCategoryNameById
 };
+*/
