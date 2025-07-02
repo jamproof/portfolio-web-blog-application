@@ -25,6 +25,51 @@
       "published_date": "2025-06-22",
       "content": "With multiple space agencies launching exploratory missions, 2025 is shaping up to be a pivotal year in space exploration. Mars rovers, lunar bases, and space telescopes are all part of the growing frontier.",
       "published": true
+    },
+    {
+      "id": 4,
+      "title": "Quantum Computing: The Next Tech Revolution",
+      "author": "Michael Lin",
+      "category_id": 1,
+      "published_date": "2025-07-01",
+      "content": "Quantum computing is poised to disrupt traditional computing with its immense processing power. As companies invest in research, breakthroughs in qubit stability and quantum algorithms are accelerating the path to commercial applications.",
+      "published": true
+    },
+    {
+      "id": 5,
+      "title": "AI in Education: Personalized Learning Takes Off",
+      "author": "Samantha Chen",
+      "category_id": 2,
+      "published_date": "2025-06-30",
+      "content": "Artificial intelligence is transforming education by enabling personalized learning experiences. Adaptive learning platforms can now analyze student behavior and adjust content to maximize comprehension and retention.",
+      "published": true
+    },
+    {
+      "id": 6,
+      "title": "Ocean Cleanup Technologies Making Waves",
+      "author": "David Nguyen",
+      "category_id": 3,
+      "published_date": "2025-06-25",
+      "content": "Innovative ocean cleanup systems are tackling the plastic pollution crisis. Using floating barriers and autonomous vessels, organizations aim to collect tons of waste from major gyres and protect marine biodiversity.",
+      "published": false
+    },
+    {
+      "id": 7,
+      "title": "Europa Mission: Searching for Alien Life",
+      "author": "Linda Park",
+      "category_id": 4,
+      "published_date": "2025-06-28",
+      "content": "NASA's upcoming Europa Clipper mission will explore the icy moon's subsurface ocean, searching for signs of life. The mission represents a significant leap in astrobiology and planetary exploration.",
+      "published": true
+    },
+    {
+      "id": 8,
+      "title": "Wearable Tech Enhancing Patient Monitoring",
+      "author": "Dr. Kevin Lee",
+      "category_id": 5,
+      "published_date": "2025-06-27",
+      "content": "Wearable devices are becoming crucial in healthcare, enabling real-time monitoring of vital signs. From heart rate sensors to glucose monitors, these tools are empowering both patients and medical professionals.",
+      "published": false
     }
   ]
   
