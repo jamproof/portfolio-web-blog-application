@@ -35,6 +35,7 @@ async function getPublishedArticles() {
             FROM articles a
             JOIN categories c ON a.category_id = c.id
             WHERE a.published = true
+            ORDER BY a.published_date DESC
         `;
         const result = await pool.query(query);
         if (result.rows.length > 0) return result.rows;
@@ -118,12 +119,65 @@ function getArticleById(id) {
         .catch(err => Promise.reject(err.message));
 }
 
+// // Get a single article by ID (published OR unpublished)
+// // Don't use at this moment. It have to implement `getAllArticles` Function
+// // Can't edit unpublished article right now
+// function getArticleById(id) {
+//     const query = `
+//         SELECT *
+//         FROM articles
+//         WHERE id = $1
+//     `;
+//     return pool.query(query, [parseInt(id)])
+//         .then(res => res.rows.length ? res.rows[0] : Promise.reject("No articles available."))
+//         .catch(err => Promise.reject(err.message));
+// }
+
 // Get category name by ID (helper)
 function getCategoryNameById(id) {
     const query = `SELECT name FROM categories WHERE id = $1`;
     return pool.query(query, [parseInt(id)])
         .then(res => res.rows.length ? res.rows[0].name : 'Unknown')
         .catch(() => 'Unknown');
+}
+
+// Update an article by ID
+function updateArticle(id, articleData) {
+    const {
+        title,
+        author,
+        category_id,
+        published_date,
+        content,
+        published = false,
+        feature_image = null
+    } = articleData;
+
+    const query = `
+        UPDATE articles
+        SET title = $1,
+            author = $2,
+            category_id = $3,
+            published_date = $4,
+            content = $5,
+            published = $6,
+            feature_image = $7
+        WHERE id = $8
+        RETURNING *
+    `;
+
+    const values = [title, author, parseInt(category_id), published_date, content, published, feature_image, parseInt(id)];
+
+    return pool.query(query, values)
+        .then(res => res.rows.length ? res.rows[0] : Promise.reject("Article not found for update"))
+        .catch(err => Promise.reject("Failed to update article: " + err.message));
+}
+
+// Delete an article by ID
+function deleteArticle(id) {
+    return pool.query(`DELETE FROM articles WHERE id = $1 RETURNING *`, [parseInt(id)])
+        .then(res => res.rows.length ? res.rows[0] : Promise.reject("Article not found for deletion"))
+        .catch(err => Promise.reject("Failed to delete article: " + err.message));
 }
 
 // Export all DB-backed functions
@@ -135,7 +189,9 @@ module.exports = {
     getArticlesByMinDate,
     getArticlesByAuthor,
     getArticleById,
-    getCategoryNameById
+    getCategoryNameById,
+    updateArticle,
+    deleteArticle
 };
 
 

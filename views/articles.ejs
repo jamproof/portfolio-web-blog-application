@@ -45,9 +45,7 @@
                                 <strong><%= article.title %></strong><br>
                                 <small class="text-muted">
                                     <%= truncateWords(article.content, 10) %>
-                                    <% if (article.content.split(/\s+/).length > 10) { %>
-                                      <a href="/article/<%= article.id %>" class="read-more-link">Read more</a>
-                                    <% } %>
+                                    <a href="/article/<%= article.id %>" class="read-more-link">Read more</a>
                                   </small>                                  
                             </td>
                             <td><%= article.author %></td>
@@ -69,7 +67,7 @@
                                   month: 'short',
                                   day: 'numeric'
                                 }) %>
-                            </td>                             
+                            </td>
                         </tr>
                     <% }) %>
                 </tbody>

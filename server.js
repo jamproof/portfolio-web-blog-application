@@ -1,3 +1,6 @@
+// Loads variables from .env into process.env
+require('dotenv').config();
+
 // Get the express module
 const express = require('express');
 
@@ -12,11 +15,19 @@ const multer = require("multer");
 const cloudinary = require('cloudinary').v2;
 const streamifier = require('streamifier');
 
+// // Configure Cloudinary
+// cloudinary.config({
+//     cloud_name: 'dl6asgowz',
+//     api_key: '291149542995368',
+//     api_secret: '4wCpwkwO06RawSeDTngnZz-6_yg',
+//     secure: true
+// });
+
 // Configure Cloudinary
 cloudinary.config({
-    cloud_name: 'dl6asgowz',
-    api_key: '291149542995368',
-    api_secret: '4wCpwkwO06RawSeDTngnZz-6_yg',
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
     secure: true
 });
 
@@ -39,6 +50,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Allows access to form text fields via req.body
 app.use(express.urlencoded({ extended: true }));
+
+// Enable HTTP method override for PUT/DELETE via query (_method)
+const methodOverride = require('method-override');
+app.use(methodOverride('_method'));
 
 // Redirect root (/) to /about
 app.get('/', (req, res) => {
@@ -150,7 +165,7 @@ app.get('/articles/add', async (req, res) => {
 });
 
 // POST new article (with optional image)
-app.post('/articles/add', upload.single("featureImage"), (req, res) => {
+app.post('/articles/add', upload.single("feature_image"), (req, res) => {
     // Helper function to upload image to Cloudinary using a stream
     const streamUpload = (req) => {
         return new Promise((resolve, reject) => {
@@ -167,7 +182,7 @@ app.post('/articles/add', upload.single("featureImage"), (req, res) => {
 
     // Function to process the article after image upload // 加入文章資料（含圖片 URL）
     function processArticle(imageUrl = "") {
-        req.body.featureImage = imageUrl;
+        req.body.feature_image = imageUrl;
 
         // Basic validation
         if (!req.body.title || !req.body.author || !req.body.content) {
@@ -196,6 +211,75 @@ app.post('/articles/add', upload.single("featureImage"), (req, res) => {
     } else {
         // No image file uploaded, just process the article without image URL
         processArticle(""); // If no image uploaded, pass an empty string // 沒圖片也能新增
+    }
+});
+
+// GET form to edit an article
+app.get('/articles/:id/edit', async (req, res) => {
+    try {
+        const article = await contentService.getArticleById(req.params.id);
+        const categories = await contentService.getCategories();
+
+        res.render('editArticle', {
+            article,
+            categories,
+            error: null
+        });
+    } catch (err) {
+        console.error("Error loading edit form:", err);
+        res.status(404).render('404', { message: "Article not found for editing." });
+    }
+});
+
+// PUT update article
+app.put('/articles/:id', upload.single("feature_image"), async (req, res) => {
+    try {
+        const articleId = req.params.id;
+
+        req.body.published = req.body.published ? true : false;
+
+        const updateArticle = async (imageUrl = "") => {
+            let finalImageUrl = imageUrl || req.body.existingImage || null;
+
+            if (req.body.removeImage) {
+                finalImageUrl = null; // remove image if checkbox is checked
+            }
+
+            const updatedData = {
+                ...req.body,
+                feature_image: finalImageUrl
+            };
+
+            await contentService.updateArticle(articleId, updatedData);
+            res.redirect(`/article/${articleId}`);
+        };
+
+        if (req.file) {
+            const uploaded = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream((error, result) => {
+                    if (result) resolve(result);
+                    else reject(error);
+                });
+                streamifier.createReadStream(req.file.buffer).pipe(stream);
+            });
+            updateArticle(uploaded.url);
+        } else {
+            updateArticle();
+        }
+    } catch (err) {
+        console.error("Error updating article:", err);
+        res.status(500).send("Failed to update article.");
+    }
+});
+
+// DELETE article
+app.delete('/articles/:id', async (req, res) => {
+    try {
+        await contentService.deleteArticle(req.params.id);
+        res.redirect('/articles');
+    } catch (err) {
+        console.error("Error deleting article:", err);
+        res.status(500).send("Failed to delete article.");
     }
 });
 
