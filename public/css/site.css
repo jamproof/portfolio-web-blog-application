@@ -93,3 +93,20 @@ h1 {
     padding-bottom: 10px;
     margin-bottom: 30px;
 }
+
+/* Bootstrap’s toggle switch */
+
+.form-switch .form-check-input {
+  width: 3rem;          /* Increase switch width */
+  height: 1.5rem;        /* Increase switch height */
+  margin-left: -2.5rem;  /* Adjust switch alignment */
+}
+
+.form-switch .form-check-input:checked {
+  background-color: #0d6efd; /* Optional: match Bootstrap primary color */
+}
+
+.form-check-label {
+  font-size: 1.1rem; /* Slightly increase label size */
+  margin-left: 0.5rem;
+}

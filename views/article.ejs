@@ -18,7 +18,12 @@
         <p class="text-muted">
             <strong>Author:</strong> <%= article.author %> |
             <strong>Category:</strong> <%= article.category_name %> |
-            <strong>Published:</strong> <%= article.published_date %>
+            <strong>Published:</strong>
+            <%= new Date(article.published_date).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+            }) %>
         </p>
         <!-- <p class="text-muted">By <%= article.author %> | Published on <%= article.published_date %></p> -->
 

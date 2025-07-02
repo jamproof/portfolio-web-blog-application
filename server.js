@@ -45,6 +45,215 @@ app.get('/', (req, res) => {
     res.redirect('/about');
 });
 
+// Serve home page
+app.get('/home', (req, res) => {
+    res.render('home');
+});
+
+// Serve about page
+app.get('/about', (req, res) => {
+    res.render('about');
+});
+
+// Refactored /articles using DB methods (content-service.js)
+app.get('/articles', async (req, res) => {
+    try {
+        const { category_id, minDate, author, search } = req.query;
+
+        let articles = [];
+
+        if (category_id) {
+            articles = await contentService.getArticlesByCategory(category_id);
+        } else if (minDate) {
+            articles = await contentService.getArticlesByMinDate(minDate);
+        } else if (author) {
+            articles = await contentService.getArticlesByAuthor(author);
+        } else {
+            articles = await contentService.getPublishedArticles();
+        }
+
+        // Apply keyword search in-memory as it's not supported by SQL query
+        if (search) {
+            const keyword = search.toLowerCase();
+            articles = articles.filter(a =>
+                (a.title && a.title.toLowerCase().includes(keyword)) ||
+                (a.content && a.content.toLowerCase().includes(keyword))
+            );
+        }
+
+        const categories = await contentService.getCategories();
+
+        // Get all published articles to extract unique authors
+        const allPublished = await contentService.getPublishedArticles();
+        const authors = [...new Set(allPublished.map(a => a.author))].sort();
+
+        res.render('articles', {
+            articles,
+            categories,
+            authors,
+            error: null,
+            query: req.query
+        });
+    } catch (err) {
+        console.error("Error loading articles:", err);
+        res.render('articles', {
+            articles: [],
+            categories: [],
+            authors: [],
+            error: err,
+            query: req.query
+        });
+    }
+});
+
+// Refactored /article/:id
+app.get('/article/:id', async (req, res) => {
+    try {
+        const article = await contentService.getArticleById(req.params.id);
+
+        try {
+            article.category_name = await contentService.getCategoryNameById(article.category_id);
+        } catch (e) {
+            console.error("Error resolving category name:", e);
+            article.category_name = 'Unknown';
+        }
+        
+        // article.category_name = await contentService.getCategoryNameById(article.category_id);
+
+        res.render('article', { article });
+    } catch (err) {
+        console.error("Error loading article:", err);
+        res.status(404).render('404', { message: "Article not found." });
+    }
+});
+
+// Refactored /categories using DB method
+app.get('/categories', async (req, res) => {
+    try {
+        const categories = await contentService.getCategories();
+        res.render('categories', { categories });
+    } catch (err) {
+        console.error("Error loading categories:", err);
+        res.render('categories', { categories: [], error: err });
+    }
+});
+
+// GET form to add article
+app.get('/articles/add', async (req, res) => {
+    try {
+        const categories = await contentService.getCategories();
+        res.render('addArticle', { categories });
+    } catch (err) {
+        console.error("Error loading categories for addArticle:", err);
+        res.render('addArticle', { categories: [], error: "Failed to load categories" });
+    }
+});
+
+// POST new article (with optional image)
+app.post('/articles/add', upload.single("featureImage"), (req, res) => {
+    // Helper function to upload image to Cloudinary using a stream
+    const streamUpload = (req) => {
+        return new Promise((resolve, reject) => {
+            let stream = cloudinary.uploader.upload_stream(
+                (error, result) => {
+                    if (result) resolve(result); // Resolve the promise with the upload result
+                    else reject(error); // Reject if there's an error
+                }
+            );
+            // Convert the buffer into a readable stream and pipe it to Cloudinary
+            streamifier.createReadStream(req.file.buffer).pipe(stream);
+        });
+    };
+
+    // Function to process the article after image upload // 加入文章資料（含圖片 URL）
+    function processArticle(imageUrl = "") {
+        req.body.featureImage = imageUrl;
+
+        // Basic validation
+        if (!req.body.title || !req.body.author || !req.body.content) {
+            return res.status(400).json({ message: "Missing required fields." });
+        }
+
+        // Call your contentService method to add the article
+        contentService.addArticle(req.body)
+            .then(() => res.redirect('/articles'))
+            .catch(err => {
+                console.error("Error adding article:", err);
+                res.status(500).json({ message: "Article creation failed", error: err });
+            });
+    }
+
+    if (req.file) {
+        // If image file is present, upload it first
+        streamUpload(req)
+            .then(uploaded => {
+                processArticle(uploaded.url);
+            })
+            .catch(err => {
+                console.error("Cloudinary upload error:", err);
+                res.status(500).json({ message: "Image upload failed", error: err });
+            });
+    } else {
+        // No image file uploaded, just process the article without image URL
+        processArticle(""); // If no image uploaded, pass an empty string // 沒圖片也能新增
+    }
+});
+
+// start the server
+app.listen(HTTP_PORT, () => {
+    console.log(`Server listening on http://localhost:${HTTP_PORT}`);
+});
+
+
+
+/*
+// Get the express module
+const express = require('express');
+
+// Built-in Node module for working with file and directory paths
+const path = require('path');
+
+// Import the content service module
+const contentService = require('./content-service');
+
+// File upload and cloud storage
+const multer = require("multer");
+const cloudinary = require('cloudinary').v2;
+const streamifier = require('streamifier');
+
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: 'dl6asgowz',
+    api_key: '291149542995368',
+    api_secret: '4wCpwkwO06RawSeDTngnZz-6_yg',
+    secure: true
+});
+
+// Initialize multer (No disk storage, files are stored in memory, buffer only)
+const upload = multer();
+
+// Create an Express app
+const app = express();
+
+// Assign a port
+const HTTP_PORT = process.env.PORT || 2025;
+
+// Set EJS as the template engine
+app.set('view engine', 'ejs');
+// Set the views directory
+app.set('views', path.join(__dirname, 'views'));
+
+// Serve static assets from /public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Allows access to form text fields via req.body
+app.use(express.urlencoded({ extended: true }));
+
+// Redirect root (/) to /about
+app.get('/', (req, res) => {
+    res.redirect('/about');
+});
+
 // // Serve home.html on /home route
 // app.get('/home', (req, res) => {
 //     res.sendFile(path.join(__dirname, '/views/home.html'));
@@ -266,3 +475,4 @@ contentService.initialize()
     .catch(err => {
         console.error("Failed to initialize content service:", err);
     });
+*/
