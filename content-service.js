@@ -70,41 +70,93 @@ function addArticle(articleData) {
         .catch(err => Promise.reject("Failed to add article: " + err.message));
 }
 
-// Get articles by category ID (published only)
-function getArticlesByCategory(categoryId) {
-    const query = `
-        SELECT a.*, c.name AS category_name
-        FROM articles a
-        JOIN categories c ON a.category_id = c.id
-        WHERE a.category_id = $1 AND a.published = true
-    `;
-    return pool.query(query, [parseInt(categoryId)])
-        .then(res => res.rows.length ? res.rows : Promise.reject("No articles found for this category"))
-        .catch(err => Promise.reject(err.message));
-}
+// // Get articles by category ID (published only)
+// function getArticlesByCategory(categoryId) {
+//     const query = `
+//         SELECT a.*, c.name AS category_name
+//         FROM articles a
+//         JOIN categories c ON a.category_id = c.id
+//         WHERE a.category_id = $1 AND a.published = true
+//     `;
+//     return pool.query(query, [parseInt(categoryId)])
+//         .then(res => res.rows.length ? res.rows : Promise.reject("No articles found for this category"))
+//         .catch(err => Promise.reject(err.message));
+// }
 
-// Get articles published after a certain date
-function getArticlesByMinDate(minDateStr) {
-    const query = `
-        SELECT *
-        FROM articles
-        WHERE published = true AND published_date >= $1
-    `;
-    return pool.query(query, [minDateStr])
-        .then(res => res.rows.length ? res.rows : Promise.reject("No articles published after that date"))
-        .catch(err => Promise.reject(err.message));
-}
+// // Get articles published after a certain date
+// function getArticlesByMinDate(minDateStr) {
+//     const query = `
+//         SELECT a.*, c.name AS category_name
+//         FROM articles a
+//         JOIN categories c ON a.category_id = c.id
+//         WHERE a.published = true AND a.published_date >= $1
+//     `;
+//     return pool.query(query, [minDateStr])
+//         .then(res => res.rows.length ? res.rows : Promise.reject("No articles published after that date"))
+//         .catch(err => Promise.reject(err.message));
+// }
 
-// Get articles by author (partial match, published only)
-function getArticlesByAuthor(authorName) {
-    const query = `
-        SELECT *
-        FROM articles
-        WHERE published = true AND LOWER(author) LIKE LOWER($1)
-    `;
-    return pool.query(query, [`%${authorName}%`])
-        .then(res => res.rows.length ? res.rows : Promise.reject("No articles found for this author"))
-        .catch(err => Promise.reject(err.message));
+// // Get articles by author (partial match, published only)
+// function getArticlesByAuthor(authorName) {
+//     const query = `
+//         SELECT a.*, c.name AS category_name
+//         FROM articles a
+//         JOIN categories c ON a.category_id = c.id
+//         WHERE a.published = true AND LOWER(a.author) LIKE LOWER($1)
+//     `;
+//     return pool.query(query, [`%${authorName}%`])
+//         .then(res => res.rows.length ? res.rows : Promise.reject("No articles found for this author"))
+//         .catch(err => Promise.reject(err.message));
+// }
+
+// Refactor all three getArticlesBy* methods together. 
+// Creating a universal getFilteredArticles() for scalability, simplify logic, 
+// reduce repetition, and make future filtering (e.g., pagination, tag filters) easier to implement.
+async function getFilteredArticles({ category_id, minDate, author, search }) {
+    try {
+        let baseQuery = `
+            SELECT a.*, c.name AS category_name
+            FROM articles a
+            JOIN categories c ON a.category_id = c.id
+            WHERE a.published = true
+        `;
+
+        const params = [];
+        let idx = 1;
+
+        if (category_id) {
+            baseQuery += ` AND a.category_id = $${idx++}`;
+            params.push(parseInt(category_id));
+        }
+
+        if (minDate) {
+            baseQuery += ` AND a.published_date >= $${idx++}`;
+            params.push(minDate);
+        }
+
+        if (author) {
+            baseQuery += ` AND LOWER(a.author) LIKE LOWER($${idx++})`;
+            params.push(`%${author}%`);
+        }
+
+        baseQuery += ` ORDER BY a.published_date DESC`;
+
+        const result = await pool.query(baseQuery, params);
+        let articles = result.rows;
+
+        // Apply keyword search in memory if necessary
+        if (search) {
+            const keyword = search.toLowerCase();
+            articles = articles.filter(article =>
+                (article.title && article.title.toLowerCase().includes(keyword)) ||
+                (article.content && article.content.toLowerCase().includes(keyword))
+            );
+        }
+
+        return articles;
+    } catch (err) {
+        return Promise.reject("Failed to fetch filtered articles: " + err.message);
+    }
 }
 
 // Get a single published article by ID
@@ -185,9 +237,10 @@ module.exports = {
     getCategories,
     getPublishedArticles,
     addArticle,
-    getArticlesByCategory,
-    getArticlesByMinDate,
-    getArticlesByAuthor,
+    // getArticlesByCategory,
+    // getArticlesByMinDate,
+    // getArticlesByAuthor,
+    getFilteredArticles,
     getArticleById,
     getCategoryNameById,
     updateArticle,

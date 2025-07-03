@@ -1,6 +1,6 @@
 # 📰 TechScope Blog – Full-Stack Blog Platform
 
-Welcome to **TechScope Blog** — a full-stack Node.js web application for creating, browsing, editing, and deleting articles on topics like technology, AI, space, and science. It features article filtering by author, date, or category, along with full-text keyword search.
+Welcome to **TechScope Blog** — a full-stack Node.js web application for creating, browsing, editing, and deleting articles on topics like technology, AI, space, and science. It features article filtering by author, date, or category, along with full-text keyword search.  
 Built with **Node.js**, **Express.js**, **EJS**, **Bootstrap 5**, **PostgreSQL** (via **Neon.tech**), and **Cloudinary** for image uploads.
 
 ---
@@ -20,9 +20,9 @@ The **TechScope Blog** is live and fully functional via [Vercel](https://vercel.
   | `/articles`                  | Browse all published articles with filters        |
   | `/articles/add`              | Add a new article (image upload supported)        |
   | `/article/:id`               | View full article details                         |
-  | `/articles/:id/edit`         | Edit an existing article                          |
-  | `PUT /articles/:id`          | Update article content & image via form           |
-  | `DELETE /articles/:id`       | Remove an article                                 |
+  | `/article/:id/edit`          | Edit an existing article                          |
+  | `PUT /article/:id`           | Update article content & image via form           |
+  | `DELETE /article/:id`        | Remove an article                                 |
   | `/categories`                | Browse all categories                             |
 
 > ✅ API routes return either HTML (via EJS) or JSON depending on usage context.  
@@ -132,7 +132,7 @@ project/
 ## 📝 Developer Notes
 
 - Articles must be `"published": true` to appear on the public `/articles` page.
-- Both `/articles/add` and `/articles/:id/edit` support image preview before upload.
+- Both `/articles/add` and `/article/:id/edit` support image preview before upload.
 - Images are uploaded and hosted using **Cloudinary**, with support for **removing or replacing** existing feature images.
 - Articles are stored in a **PostgreSQL database** (via [Neon.tech](https://neon.tech)), not local files.
 - Full CRUD is implemented: create, read, update, delete articles via the admin UI.
@@ -183,7 +183,7 @@ PORT=2025
 ## 📌 Known Limitations
 
 - ❌ No user login/authentication — admin routes are **public**
-- ❌ No role-based access — anyone can POST/EDIT articles
+- ❌ No role-based access — anyone can POST/EDIT/DELETE articles
 - ⚠️ No WYSIWYG editor for content (markdown/raw HTML only)
 <!-- 🔍 WYSIWYG stands for “What You See Is What You Get” — a text editor that lets users format content visually (like bold/italic, images, bullet lists) without writing HTML or Markdown. -->
 - ⚠️ No pagination or lazy-loading for long article lists

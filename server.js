@@ -70,35 +70,67 @@ app.get('/about', (req, res) => {
     res.render('about');
 });
 
-// Refactored /articles using DB methods (content-service.js)
+// // Refactored /articles using DB methods (content-service.js)
+// app.get('/articles', async (req, res) => {
+//     try {
+//         const { category_id, minDate, author, search } = req.query;
+
+//         let articles = [];
+
+//         if (category_id) {
+//             articles = await contentService.getArticlesByCategory(category_id);
+//         } else if (minDate) {
+//             articles = await contentService.getArticlesByMinDate(minDate);
+//         } else if (author) {
+//             articles = await contentService.getArticlesByAuthor(author);
+//         } else {
+//             articles = await contentService.getPublishedArticles();
+//         }
+
+//         // Apply keyword search in-memory as it's not supported by SQL query
+//         if (search) {
+//             const keyword = search.toLowerCase();
+//             articles = articles.filter(a =>
+//                 (a.title && a.title.toLowerCase().includes(keyword)) ||
+//                 (a.content && a.content.toLowerCase().includes(keyword))
+//             );
+//         }
+
+//         const categories = await contentService.getCategories();
+
+//         // Get all published articles to extract unique authors
+//         const allPublished = await contentService.getPublishedArticles();
+//         const authors = [...new Set(allPublished.map(a => a.author))].sort();
+
+//         res.render('articles', {
+//             articles,
+//             categories,
+//             authors,
+//             error: null,
+//             query: req.query
+//         });
+//     } catch (err) {
+//         console.error("Error loading articles:", err);
+//         res.render('articles', {
+//             articles: [],
+//             categories: [],
+//             authors: [],
+//             error: err,
+//             query: req.query
+//         });
+//     }
+// });
+
+// Refactor: Use just getFilteredArticles() across app for consistent, scalable filtering
 app.get('/articles', async (req, res) => {
     try {
         const { category_id, minDate, author, search } = req.query;
 
-        let articles = [];
-
-        if (category_id) {
-            articles = await contentService.getArticlesByCategory(category_id);
-        } else if (minDate) {
-            articles = await contentService.getArticlesByMinDate(minDate);
-        } else if (author) {
-            articles = await contentService.getArticlesByAuthor(author);
-        } else {
-            articles = await contentService.getPublishedArticles();
-        }
-
-        // Apply keyword search in-memory as it's not supported by SQL query
-        if (search) {
-            const keyword = search.toLowerCase();
-            articles = articles.filter(a =>
-                (a.title && a.title.toLowerCase().includes(keyword)) ||
-                (a.content && a.content.toLowerCase().includes(keyword))
-            );
-        }
+        const articles = await contentService.getFilteredArticles({ category_id, minDate, author, search });
 
         const categories = await contentService.getCategories();
 
-        // Get all published articles to extract unique authors
+        // Get all authors from all published articles (not just filtered ones)
         const allPublished = await contentService.getPublishedArticles();
         const authors = [...new Set(allPublished.map(a => a.author))].sort();
 
@@ -215,7 +247,7 @@ app.post('/articles/add', upload.single("feature_image"), (req, res) => {
 });
 
 // GET form to edit an article
-app.get('/articles/:id/edit', async (req, res) => {
+app.get('/article/:id/edit', async (req, res) => {
     try {
         const article = await contentService.getArticleById(req.params.id);
         const categories = await contentService.getCategories();
@@ -232,7 +264,7 @@ app.get('/articles/:id/edit', async (req, res) => {
 });
 
 // PUT update article
-app.put('/articles/:id', upload.single("feature_image"), async (req, res) => {
+app.put('/article/:id', upload.single("feature_image"), async (req, res) => {
     try {
         const articleId = req.params.id;
 
@@ -273,7 +305,7 @@ app.put('/articles/:id', upload.single("feature_image"), async (req, res) => {
 });
 
 // DELETE article
-app.delete('/articles/:id', async (req, res) => {
+app.delete('/article/:id', async (req, res) => {
     try {
         await contentService.deleteArticle(req.params.id);
         res.redirect('/articles');
