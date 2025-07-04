@@ -1,5 +1,7 @@
 # 📰 TechScope Blog – Full-Stack Blog Platform
 
+_A fully deployed Node.js blogging platform featuring image upload, SQL-backed filtering, and EJS-rendered pages._
+
 Welcome to **TechScope Blog** — a full-stack Node.js web application for creating, browsing, editing, and deleting articles on topics like technology, AI, space, and science. It features article filtering by author, date, or category, along with full-text keyword search.  
 Built with **Node.js**, **Express.js**, **EJS**, **Bootstrap 5**, **PostgreSQL** (via **Neon.tech**), and **Cloudinary** for image uploads.
 
@@ -25,7 +27,8 @@ The **TechScope Blog** is live and fully functional via [Vercel](https://vercel.
   | `DELETE /article/:id`        | Remove an article                                 |
   | `/categories`                | Browse all categories                             |
 
-> ✅ API routes return either HTML (via EJS) or JSON depending on usage context.  
+> ✅ Most routes return **server-rendered HTML** (via EJS templates).  
+> ⚠️ JSON responses are only returned for **form validation errors** or **internal error messages**.  
 > ✅ Image uploads are handled via **Cloudinary**.  
 > ✅ API routes tested via **Postman Web** and **Postman Desktop Agent** (for local).
 
@@ -60,6 +63,7 @@ The **TechScope Blog** is live and fully functional via [Vercel](https://vercel.
 - **Node.js / Express.js** — Backend server & routing  
 - **PostgreSQL** – Persistent relational database (via Neon.tech)  
 - **Multer + Streamifier + Cloudinary** – Image file handling & storage  
+- **Method-override** – PUT/DELETE requests
 - **dotenv** – Secure environment variable management
 
 ---
@@ -68,9 +72,10 @@ The **TechScope Blog** is live and fully functional via [Vercel](https://vercel.
 
 ```
 project/
-├── data/                          # JSON files simulating a database
-│   ├── articles.json              # Article data
-│   └── categories.json            # Category data
+├── backup/                        # Archived legacy JSON files from earlier development stages (for reference only)
+│   └── data/                      # JSON files simulating a database (previously used for development)
+│       ├── articles.json          # Article data
+│       └── categories.json        # Category data
 ├── public/                        # Static assets
 │   ├── css/
 │   │   └── site.css               # Custom CSS styles
@@ -122,10 +127,19 @@ project/
 
 ├── content-service.js             # 🧠 DB logic: query & filter
 
-├── data/                          # 📦 Simulated Database
-│   ├── articles.json              # 📰 All articles data
-│   └── categories.json            # 📂 Article categories
+├── backup/                        # 🗃 Archived JSON files from earlier development stages
+│   └── data/                      # 📦 Simulated Database
+│       ├── articles.json          # 📰 All articles data
+│       └── categories.json        # 📂 Article categories
 ```
+
+---
+
+## 🗃 Data Sources
+
+This project **now uses PostgreSQL** as the single source of truth for all articles and categories. All former `data/articles.json` and `data/categories.json` files are deprecated and **moved to `/backup/` for archival purposes only**.
+
+See [`/backup/data/README.md`](./backup/data/README.md) for details.
 
 ---
 
@@ -180,6 +194,12 @@ PORT=2025
 
 ---
 
+## 📁 Legacy Data
+
+Archived legacy data can be found in the `/backup/data/` folder. These JSON files were used during development prior to PostgreSQL integration. Do **not** use them in current application logic.
+
+---
+
 ## 📌 Known Limitations
 
 - ❌ No user login/authentication — admin routes are **public**
@@ -191,7 +211,18 @@ PORT=2025
 
 ---
 
-## 👤 Author
+## ✅ To Do / Future Improvements
+
+* User authentication and roles
+* Admin dashboard for category/article management
+* Tag-based article filtering
+* Pagination and search enhancement
+
+---
+
+## 👤 Author & Project Purpose
+
+This project was built as a personal portfolio piece to demonstrate full-stack capabilities with Node.js.  
 
 **JamProof**  
 📧 jamproof0701@gmail.com  
