@@ -2,6 +2,8 @@
 
 _A fully deployed Node.js blogging platform featuring image upload, SQL-backed filtering, and EJS-rendered pages._
 
+![screenshot](./public/img/blog-articles-page.jpg)
+
 Welcome to **TechScope Blog** — a full-stack Node.js web application for creating, browsing, editing, and deleting articles on topics like technology, AI, space, and science. It features article filtering by author, date, or category, along with full-text keyword search.  
 Built with **Node.js**, **Express.js**, **EJS**, **Bootstrap 5**, **PostgreSQL** (via **Neon.tech**), and **Cloudinary** for image uploads.
 
