@@ -6,46 +6,24 @@
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/site.css" />
-    <title>About</title>
+    <title>About Me & Blog</title>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">My Site</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/home">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/about">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/articles">Articles</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/categories">Categories</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/articles/add">Add Article</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav> -->
-
     <!-- Navbar -->
     <%- include("partials/navbar") %>
 
-    <!-- Page Banner and Content -->
-    <div class="container mt-5">
-        <img src="/img/introduction.png" class="img-fluid mb-4" alt="site banner">
+    <!-- Hero Section -->
+    <section class="about-hero py-5 text-center">
+        <div class="container">
+        <img src="/img/wassup-folks.png" class="img-fluid mb-4 rounded shadow" alt="site banner" style="max-width: 500px;">
+        <h1 class="display-5 fw-bold">About Me & This Blog</h1>
+        <p class="lead text-muted">A journey through tech, AI, climate science, and the cosmos.</p>
+        </div>
+    </section>
 
-        <h1>About Me & Blog</h1>
+    <!-- Main Content -->
+    <section class="container my-5">
+        <div class="card p-4 shadow-sm border-0 about-card">
         <p>I graduated from the Computer Programming program at Seneca College in Canada and 
             am working toward a career as a back-end developer. I have a strong foundation in 
             programming, logic, and web development, and I enjoy learning new technologies and 
@@ -54,19 +32,11 @@
             artificial intelligence, climate science, and space exploration. 
             Whether you're curious about the future of AI, interested in global environmental issues, 
             or fascinated by the cosmos, you'll find thoughtful insights and up-to-date content here.</p>
-
-        <!-- Back link -->
-        <a href="/home" class="btn btn-primary mt-3">Back Home</a>
-    </div>
-
-    <!-- Footer -->
-    <!-- <footer class="bg-dark text-white text-center py-3 mt-5">
-        <p>&copy; 2025 JamProof. All rights reserved.</p>
-        <p>Contact: jamproof0701@gmail.com</p>
-    </footer> -->
-
-    <!-- Bootstrap 5 JS -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+        <div class="text-end">
+            <a href="/home" class="btn btn-outline-primary mt-3">← Back to Home</a>
+        </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <%- include("partials/footer") %>
