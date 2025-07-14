@@ -187,7 +187,7 @@ app.post('/articles/add', upload.single("feature_image"), (req, res) => {
                 console.error("Cloudinary upload error:", err);
                 const errorMessage = err?.message || JSON.stringify(err) || "Unknown error";
                 res.status(500).json({ message: "Image upload failed", error: errorMessage });
-            });            
+            });
     } else {
         // No image file uploaded, just process the article without image URL
         processArticle(""); // If no image uploaded, pass an empty string // 沒圖片也能新增
