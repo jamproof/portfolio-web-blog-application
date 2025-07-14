@@ -24,7 +24,9 @@ cloudinary.config({
 });
 
 // Initialize multer (No disk storage, files are stored in memory, buffer only)
-const upload = multer();
+// const upload = multer();
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // Create an Express app
 const app = express();
@@ -137,6 +139,12 @@ app.get('/articles/add', async (req, res) => {
 
 // POST new article (with optional image)
 app.post('/articles/add', upload.single("feature_image"), (req, res) => {
+    // Debug log for uploaded file
+    console.log("Image file received:", req.file);
+    if (req.file) {
+        console.log("Buffer size:", req.file.buffer?.length || "No buffer");
+    }
+    
     // Helper function to upload image to Cloudinary using a stream
     const streamUpload = (req) => {
         return new Promise((resolve, reject) => {
@@ -177,8 +185,9 @@ app.post('/articles/add', upload.single("feature_image"), (req, res) => {
             })
             .catch(err => {
                 console.error("Cloudinary upload error:", err);
-                res.status(500).json({ message: "Image upload failed", error: err });
-            });
+                const errorMessage = err?.message || JSON.stringify(err) || "Unknown error";
+                res.status(500).json({ message: "Image upload failed", error: errorMessage });
+            });            
     } else {
         // No image file uploaded, just process the article without image URL
         processArticle(""); // If no image uploaded, pass an empty string // 沒圖片也能新增
@@ -233,9 +242,9 @@ app.put('/article/:id', upload.single("feature_image"), async (req, res) => {
                 });
                 streamifier.createReadStream(req.file.buffer).pipe(stream);
             });
-            updateArticle(uploaded.url);
+            await updateArticle(uploaded.url);
         } else {
-            updateArticle();
+            await updateArticle();
         }
     } catch (err) {
         console.error("Error updating article:", err);
